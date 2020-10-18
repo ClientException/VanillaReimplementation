@@ -2,6 +2,8 @@ package net.minestom.vanilla.anvil;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.data.Data;
+import net.minestom.server.entity.Entity;
+import net.minestom.server.entity.EntityType;
 import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.DynamicChunk;
 import net.minestom.server.instance.IChunkLoader;
@@ -14,10 +16,13 @@ import net.minestom.server.registry.Registries;
 import net.minestom.server.storage.StorageLocation;
 import net.minestom.server.utils.BlockPosition;
 import net.minestom.server.utils.NamespaceID;
+import net.minestom.server.utils.Position;
 import net.minestom.server.utils.chunk.ChunkCallback;
 import net.minestom.server.utils.chunk.ChunkUtils;
 import net.minestom.server.world.biomes.Biome;
 import net.minestom.vanilla.blocks.VanillaBlock;
+import net.minestom.vanilla.entity.VanillaEntityMap;
+import net.minestom.vanilla.io.NBTSerializable;
 import org.jglrxavpok.hephaistos.mca.AnvilException;
 import org.jglrxavpok.hephaistos.mca.ChunkColumn;
 import org.jglrxavpok.hephaistos.mca.CoordinatesKt;
@@ -90,6 +95,7 @@ public class AnvilChunkLoader implements IChunkLoader {
                     if (callback != null) {
                         callback.accept(c);
                     }
+                    loadEntities(instance, fileChunk);
                     // TODO: Other elements to load
                 });
 
@@ -114,6 +120,17 @@ public class AnvilChunkLoader implements IChunkLoader {
                 return null;
             }
         });
+    }
+
+    private void loadEntities(Instance instance, ChunkColumn fileChunk) {
+        for(NBTCompound entityNBT : fileChunk.getEntities()) {
+            EntityType type = Registries.getEntityType(entityNBT.getString("id"));
+            Entity e = VanillaEntityMap.createEntity(type, new Position());
+            if(e != null) {
+                ((NBTSerializable)e).readFrom(entityNBT);
+                e.setInstance(instance);
+            }
+        }
     }
 
     private void loadTileEntities(Chunk loadedChunk, int chunkX, int chunkZ, Instance instance, ChunkColumn fileChunk) {

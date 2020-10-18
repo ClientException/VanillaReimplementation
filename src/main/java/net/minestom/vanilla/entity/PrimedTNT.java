@@ -8,10 +8,12 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.utils.Position;
 import net.minestom.server.utils.binary.BinaryWriter;
 import net.minestom.vanilla.instance.VanillaExplosion;
+import net.minestom.vanilla.io.NBTSerializable;
+import org.jglrxavpok.hephaistos.nbt.NBTCompound;
 
 import java.util.function.Consumer;
 
-public class PrimedTNT extends ObjectEntity {
+public class PrimedTNT extends ObjectEntity implements VanillaEntity {
 
     private int fuseTime = 0;
 
@@ -59,6 +61,18 @@ public class PrimedTNT extends ObjectEntity {
     @Override
     public void spawn() {
 
+    }
+
+    @Override
+    public void readFrom(NBTCompound compound) {
+        VanillaEntity.super.readFrom(compound);
+        fuseTime = compound.getAsShort("Fuse");
+    }
+
+    @Override
+    public NBTCompound writeTo(NBTCompound compound) {
+        compound.setShort("Fuse", (short) fuseTime);
+        return VanillaEntity.super.writeTo(compound);
     }
 
     public int getFuseTime() {
