@@ -3,6 +3,7 @@ package net.minestom.vanilla.blocks;
 import net.minestom.server.data.Data;
 import net.minestom.server.entity.ItemEntity;
 import net.minestom.server.entity.Player;
+import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.inventory.Inventory;
@@ -37,7 +38,8 @@ public abstract class ChestLikeBlock extends VanillaBlock {
             for(ItemStack stack : blockEntity.getInventory().getItemStacks()) {
                 Random rng = new Random();
                 ItemEntity entity = new ItemEntity(stack, new Position((float) (blockPosition.getX()+rng.nextDouble()), blockPosition.getY()+.5f, (float) (blockPosition.getZ()+rng.nextDouble())));
-                instance.addEntity(entity);
+                Chunk c = instance.getChunkAt(blockPosition);
+                instance.addEntityToChunk(entity, c);
             }
         }
     }
@@ -76,7 +78,7 @@ public abstract class ChestLikeBlock extends VanillaBlock {
         if(originalData instanceof ChestBlockEntity) {
             data = (ChestBlockEntity) originalData;
         } else {
-            data = new ChestBlockEntity(position.clone());
+            data = new ChestBlockEntity(position.copy());
         }
 
         // TODO: CustomName

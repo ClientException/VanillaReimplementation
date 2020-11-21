@@ -8,10 +8,24 @@ import net.minestom.vanilla.event.entity.WriteNBTTagsEvent;
 import net.minestom.vanilla.io.NBTSerializable;
 import org.jglrxavpok.hephaistos.nbt.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.UUID;
 
 public class VanillaEntityUtils {
+
+    private static Method setUUID;
+
+    static {
+        try {
+            setUUID = Entity.class.getDeclaredMethod("setUuid", UUID.class);
+            setUUID.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void readCommonTags(Entity entity, NBTCompound compound) {
         assert NamespaceID.from(entity.getEntityType().getNamespaceID()).equals(NamespaceID.from(compound.getString("id")));
 
@@ -40,9 +54,13 @@ public class VanillaEntityUtils {
 
         int portalCooldown = compound.containsKey("PortalCooldown") ? compound.getAsInt("PortalCooldown"): 0; // TODO: portal cooldown
         UUID uuid = NBTSerializable.uuidFromNBTFormat(compound.getIntArray("UUID"));
-        entity.setUuid(uuid);
+        try {
+            setUUID.invoke(entity, uuid);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
 
-        if(compound.containsKey("CustomName")) {
+        if(compound.containsKey("CustomName") && compound.containsKey("CustomNameVisible")) {
             entity.setCustomNameVisible(compound.getAsByte("CustomNameVisible") == 1);
             entity.setCustomName(ColoredText.of(compound.getString("CustomName"))); // TODO: check that this works properly
         }

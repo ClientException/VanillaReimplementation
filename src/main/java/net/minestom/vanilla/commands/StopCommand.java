@@ -15,7 +15,7 @@ public class StopCommand extends Command {
         setDefaultExecutor(this::execute);
     }
 
-    private boolean condition(CommandSender player) {
+    private boolean condition(CommandSender player, String str) {
         return true; // TODO: permissions
     }
 

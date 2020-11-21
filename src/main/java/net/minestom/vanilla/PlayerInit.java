@@ -161,10 +161,10 @@ public class PlayerInit {
             player.addEventCallback(ItemDropEvent.class, event -> {
                 ItemStack droppedItem = event.getItemStack();
 
-                ItemEntity itemEntity = new ItemEntity(droppedItem, player.getPosition().clone().add(0, 1.5f, 0));
+                ItemEntity itemEntity = new ItemEntity(droppedItem, player.getPosition().copy().add(0, 1.5f, 0));
                 itemEntity.setPickupDelay(500, TimeUnit.MILLISECOND);
                 itemEntity.setInstance(player.getInstance());
-                Vector velocity = player.getPosition().clone().getDirection().multiply(6);
+                Vector velocity = player.getPosition().copy().getDirection().multiply(6);
                 itemEntity.setVelocity(velocity);
             });
         });
