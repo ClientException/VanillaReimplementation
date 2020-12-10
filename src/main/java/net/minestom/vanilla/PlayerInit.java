@@ -29,6 +29,7 @@ import net.minestom.vanilla.anvil.AnvilChunkLoader;
 import net.minestom.vanilla.blocks.NetherPortalBlock;
 import net.minestom.vanilla.blocks.VanillaBlocks;
 import net.minestom.vanilla.dimensions.VanillaDimensionTypes;
+import net.minestom.vanilla.entityspawner.OverworldEntitySpawner;
 import net.minestom.vanilla.generation.VanillaTestGenerator;
 import net.minestom.vanilla.instance.VanillaExplosion;
 import net.minestom.vanilla.system.ServerProperties;
@@ -55,7 +56,9 @@ public class PlayerInit {
         overworld.setData(new SerializableDataImpl());
         overworld.setExplosionSupplier(explosionGenerator);
         overworld.setChunkLoader(new AnvilChunkLoader(storageManager.getLocation(worldName + "/region")));
-
+        new OverworldEntitySpawner(overworld);
+        
+        
         nether = MinecraftServer.getInstanceManager().createInstanceContainer(VanillaDimensionTypes.NETHER, MinecraftServer.getStorageManager().getLocation(worldName + "/DIM-1/data"));
         nether.enableAutoChunkLoad(true);
         nether.setChunkGenerator(noiseTestGenerator);
@@ -69,7 +72,8 @@ public class PlayerInit {
         end.setData(new SerializableDataImpl());
         end.setExplosionSupplier(explosionGenerator);
         end.setChunkLoader(new AnvilChunkLoader(storageManager.getLocation(worldName + "/DIM1/region")));
-
+        
+        
         // Load some chunks beforehand
         int loopStart = -2;
         int loopEnd = 2;

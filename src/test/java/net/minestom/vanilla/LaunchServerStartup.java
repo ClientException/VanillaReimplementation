@@ -46,7 +46,7 @@ class LaunchServerStartup {
                 player.kick("Server is closing.");
                 connectionManager.removePlayer(player.getPlayerConnection());
             });
-        });
+        }).schedule();
 
         minecraftServer.start(properties.get("server-ip"), Integer.parseInt(properties.get("server-port")), (playerConnection, responseData) -> {
             responseData.setName(MinecraftServer.VERSION_NAME);
